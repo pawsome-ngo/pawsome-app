@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import { useAuth } from './context/AuthContext';
+import AuthForm from './components/AuthForm';
+import Layout from './components/Layout';
+import { HomePage, ProfilePage } from './pages/HomePage';
+import { ChatPage } from './pages/ChatPage';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const { isAuthenticated, loading } = useAuth();
+    const [page, setPage] = useState('home');
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    if (loading) {
+        return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    }
+
+    if (!isAuthenticated) {
+        return <AuthForm />;
+    }
+
+    const renderPage = () => {
+        switch (page) {
+            case 'profile':
+                return <ProfilePage />;
+            case 'chat':
+                return <ChatPage />;
+            case 'home':
+            default:
+                return <HomePage />;
+        }
+    };
+
+    return (
+        <Layout setPage={setPage}>
+            {renderPage()}
+        </Layout>
+    );
 }
-
-export default App
+export default App;
