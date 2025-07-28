@@ -67,11 +67,11 @@ export const ChatPage = () => {
         });
 
         return () => {
-            if (stompClient.current) {
+            if (stompClient.current && stompClient.current.connected) {
                 stompClient.current.disconnect();
             }
         };
-    }, [activeChannel]);
+    }, [activeChannel, user.username]);
 
     const sendMessage = (msgContent) => {
         if (msgContent && stompClient.current?.connected && activeChannel && user) {
